@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import pv.sb_tmdb_mvc.dto.GenreListDto;
+import pv.sb_tmdb_mvc.dto.MovieCountryReleasesDto;
 import pv.sb_tmdb_mvc.dto.MovieDto;
-import pv.sb_tmdb_mvc.dto.UserDto;
 import pv.sb_tmdb_mvc.service.AppService;
 
 @Controller
@@ -62,6 +62,23 @@ public class AppController {
 		
 		return "genres.html";
 	}
+	
+	
+	@GetMapping("/movie/releases")
+	public String showMovieCountriesAndReleases(
+				Model model,
+				@RequestParam("movieid") int movieId			
+			) {
+		
+		MovieCountryReleasesDto movieCountryReleasesDto = service.getMovieCountriesAndReleases(movieId);
+		model.addAttribute("moviecountryreleasesdto", movieCountryReleasesDto);
+		
+		return "releases.html";
+	}
+	
+	
+	
+	
 	
 //	@GetMapping("/movie/usermovies")
 //	public String showMoviesFromUser(

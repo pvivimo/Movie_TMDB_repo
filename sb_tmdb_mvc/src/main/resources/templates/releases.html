@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+	<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+	</head>
+	<body>
+	
+		<table>
+			<tr>
+				<th>MovieId</th>
+				<th>country Code and Releases</th>
+			</tr>
+		
+		<tr>
+			<td th:text="${moviecountryreleasesdto.getId()}"></td>
+			<td>
+				<table>
+					<tr th:each="countryreleasedto : ${moviecountryreleasesdto.getCountryReleases()}" >
+					
+						<td th:text="${countryreleasedto.getCountryCode()}"></td>
+						
+						<td>
+							<table>
+								<tr th:each="releasedto : ${countryreleasedto.getReleaseDatesAndTypes()}" >
+									
+									<td th:text="${releasedto.getReleaseDate()}"></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+
+
+</body>
+</html>

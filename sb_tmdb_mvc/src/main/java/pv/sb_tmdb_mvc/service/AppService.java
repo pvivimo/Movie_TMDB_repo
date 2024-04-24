@@ -6,15 +6,19 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import pv.sb_tmdb_mvc.dto.CountryReleaseDto;
 import pv.sb_tmdb_mvc.dto.GenreDto;
 import pv.sb_tmdb_mvc.dto.GenreListDto;
+import pv.sb_tmdb_mvc.dto.MovieCountryReleasesDto;
 import pv.sb_tmdb_mvc.dto.MovieDto;
-import pv.sb_tmdb_mvc.dto.UserDto;
+import pv.sb_tmdb_mvc.dto.ReleaseDateAndTypeDto;
 import pv.sb_tmdb_mvc.model.Genre;
 import pv.sb_tmdb_mvc.model.Movie;
+import pv.sb_tmdb_mvc.model.TMDBCountryRelease;
 import pv.sb_tmdb_mvc.model.TMDBGenreResult;
+import pv.sb_tmdb_mvc.model.TMDBMovieCountryReleases;
 import pv.sb_tmdb_mvc.model.TMDBMovieResult;
-import pv.sb_tmdb_mvc.model.User;
+import pv.sb_tmdb_mvc.model.TMDBReleaseDateAndType;
 
 @Service
 public class AppService {
@@ -94,6 +98,58 @@ public class AppService {
 		
 		return genreListDto;
 	}
+
+	public MovieCountryReleasesDto getMovieCountriesAndReleases(int movieId) {
+		
+		MovieCountryReleasesDto movieCountryReleasesDto = null;
+		
+		RestTemplate rt = new RestTemplate();		
+		TMDBMovieCountryReleases mcr = rt.getForObject("https://api.themoviedb.org/3/movie/" + movieId + "/release_dates?api_key=c1fa0cf3eda97ff6dbd2a15bf9e29f75",
+		TMDBMovieCountryReleases.class);
+		
+		
+		List<TMDBCountryRelease> tmdbCountryReleaseList = mcr.getResults();
+		List<CountryReleaseDto> countryReleaseDtoList = new ArrayList<>();
+		for(int index_tmdbCountryReleaseList = 0; index_tmdbCountryReleaseList < tmdbCountryReleaseList.size(); index_tmdbCountryReleaseList++) {
+			
+			TMDBCountryRelease currentTMDBCountryRelease = tmdbCountryReleaseList.get(index_tmdbCountryReleaseList);
+			
+			
+			List<TMDBReleaseDateAndType> tmdbReleaseDateAndTypeList = currentTMDBCountryRelease.getRelease_dates();
+			List<ReleaseDateAndTypeDto> releaseDateAndTypeDtoList = new ArrayList<>();
+			for(int index_tmdbReleaseDateAndTypeList = 0; index_tmdbReleaseDateAndTypeList < tmdbReleaseDateAndTypeList.size(); index_tmdbReleaseDateAndTypeList++) {
+				
+				TMDBReleaseDateAndType tmdbReleaseDateAndType = tmdbReleaseDateAndTypeList.get(index_tmdbReleaseDateAndTypeList);
+				
+				/** ReleaseDate --> ReleaseDateDto */
+				ReleaseDateAndTypeDto releaseDto = new ReleaseDateAndTypeDto(
+							tmdbReleaseDateAndType.getRelease_date(),
+							tmdbReleaseDateAndType.getType()
+						);
+				releaseDateAndTypeDtoList.add(releaseDto);
+			}
+			
+			
+			/** Country --> CountryDto */
+			CountryReleaseDto countryReleaseDto = new CountryReleaseDto(
+						currentTMDBCountryRelease.getIso_3166_1(),
+						releaseDateAndTypeDtoList
+					);
+			countryReleaseDtoList.add(countryReleaseDto);
+		}
+		
+		
+		/** MovieCountryReleases --> MovieCountryReleasesDto */
+		movieCountryReleasesDto = new MovieCountryReleasesDto(
+					movieId,
+					countryReleaseDtoList
+				);
+		
+		return movieCountryReleasesDto;
+	}
+
+	
+	
 
 //	public UserDto getUserById(int userId) {
 //
