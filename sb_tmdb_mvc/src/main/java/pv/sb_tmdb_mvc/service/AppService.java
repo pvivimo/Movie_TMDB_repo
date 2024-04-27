@@ -6,12 +6,14 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import pv.sb_tmdb_mvc.db.Database;
 import pv.sb_tmdb_mvc.dto.CountryReleaseDto;
 import pv.sb_tmdb_mvc.dto.GenreDto;
 import pv.sb_tmdb_mvc.dto.GenreListDto;
 import pv.sb_tmdb_mvc.dto.MovieCountryReleasesDto;
 import pv.sb_tmdb_mvc.dto.MovieDto;
 import pv.sb_tmdb_mvc.dto.ReleaseDateAndTypeDto;
+import pv.sb_tmdb_mvc.dto.UserDto;
 import pv.sb_tmdb_mvc.model.Genre;
 import pv.sb_tmdb_mvc.model.Movie;
 import pv.sb_tmdb_mvc.model.TMDBCountryRelease;
@@ -19,10 +21,19 @@ import pv.sb_tmdb_mvc.model.TMDBGenreResult;
 import pv.sb_tmdb_mvc.model.TMDBMovieCountryReleases;
 import pv.sb_tmdb_mvc.model.TMDBMovieResult;
 import pv.sb_tmdb_mvc.model.TMDBReleaseDateAndType;
+import pv.sb_tmdb_mvc.model.User;
 
 @Service
 public class AppService {
 	
+	private Database db;
+	
+	public AppService(Database db) {
+		super();
+		this.db = db;
+	}
+
+
 	private static final String TMDB_API_KEY = "c1fa0cf3eda97ff6dbd2a15bf9e29f75";
 
 	public MovieDto getMovieById(int movieId) {
@@ -148,41 +159,39 @@ public class AppService {
 		return movieCountryReleasesDto;
 	}
 
-	
-	
 
-//	public UserDto getUserById(int userId) {
-//
-//		UserDto userDto = null;
-//		
-//		User user = db.getUserById(userId);
-//		
-//		List<MovieDto> movieDtos = new ArrayList<>();
-//		
-//		for(int index = 0; index < user.getSeenMovieIds().size(); index++) {
-//			
-//			RestTemplate rt = new RestTemplate();
-//			Movie movie = rt.getForObject(
-//					"https://api.themoviedb.org/3/movie/" + user.getSeenMovieIds().get(index) + "?api_key=c1fa0cf3eda97ff6dbd2a15bf9e29f75",
-//					Movie.class);
-//			
-//			MovieDto movieDto = convertMovieToMovieDto(movie);
-//			movieDtos.add(movieDto);
-//			
-//		}
-//		
-//		userDto = new UserDto(
-//				user.getId(),
-//				user.getName(),
-//				user.getAge()
-//				
-//				)
-//				
-//				
-//		return userDto;
-//	}
-//	
-//		
+	public UserDto getUserById(int userId) {
+
+		UserDto userDto = null;
+		
+		User user = db.getUserById(userId);
+		
+		List<MovieDto> movieDtos = new ArrayList<>();
+		
+		for(int index = 0; index < user.getSeenMovieIds().size(); index++) {
+			
+			RestTemplate rt = new RestTemplate();
+			Movie movie = rt.getForObject(
+					"https://api.themoviedb.org/3/movie/" + user.getSeenMovieIds().get(index) + "?api_key=c1fa0cf3eda97ff6dbd2a15bf9e29f75",
+					Movie.class);
+			
+			MovieDto movieDto = convertMovieToMovieDto(movie);
+			movieDtos.add(movieDto);
+			
+		}
+		
+		userDto = new UserDto(
+				user.getId(),
+				user.getName(),
+				user.getAge()
+				movieDtos
+				);
+				
+				
+		return userDto;
+	}
+	
+		
 //		public MovieDtoList getFristTenMovieByTitle(String mTitle) {
 //	}
 //	

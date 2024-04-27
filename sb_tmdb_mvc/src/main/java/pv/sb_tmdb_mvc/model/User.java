@@ -1,65 +1,80 @@
 package pv.sb_tmdb_mvc.model;
 
+import java.beans.Transient;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
+@Entity
+@Table(name = "users")
 public class User {
 
-
-	
+	@Id
+	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
+	@Column(name = "name")
 	private String name;
+	
+	@Column(name = "age")
 	private int age;
+		
+	@Transient
+	private List<Integer> seenMovieIds;
 	
-	
+	public User() {
+		this.seenMovieIds = new ArrayList<>();
+	}
 
 	public int getId() {
 		return id;
 	}
 
-
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
-
 
 	public String getName() {
 		return name;
 	}
 
-
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
-
 
 	public int getAge() {
 		return age;
 	}
 
-
-
 	public void setAge(int age) {
 		this.age = age;
 	}
 
-
-
-	public Object getSeenMovieIds() {
-
-
-		
-		return null;
+	public List<Integer> getSeenMovieIds() {
+		return seenMovieIds;
 	}
 
-
+	public void addMovieId(Integer movieId) {
+		this.seenMovieIds.add(movieId);
+	}
+	
+	public void setSeenMovieIds(List<Integer> seenMovieIds) {
+		this.seenMovieIds = seenMovieIds;
+	}
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", age=" + age + "]";
+		return "User [id=" + id + ", name=" + name + ", age=" + age + ", seenMovieIds=" + seenMovieIds + "]";
 	}
+	
 	
 	
 
